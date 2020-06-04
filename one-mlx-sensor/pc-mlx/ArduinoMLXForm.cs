@@ -72,7 +72,10 @@ namespace PcMlx
                 }
                 catch (System.IO.IOException ex)
                 {
-                    MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, 
+                        "Something went wrong. Check no other app is connected to " + portName + ".", 
+                        MessageBoxButtons.OK, 
+                        MessageBoxIcon.Error);
                 }
 
                 btnConnRedBoard.Text = "Disconnect";
