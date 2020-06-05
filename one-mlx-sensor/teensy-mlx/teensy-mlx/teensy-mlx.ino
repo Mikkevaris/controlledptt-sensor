@@ -78,7 +78,7 @@ float temperature(int address, int obj_amb_addr) {
   //i2c_start_wait(device + I2C_WRITE);
   //i2c_write(obj_amb_addr); // this is address for object temperature
   Wire.beginTransmission(device);
-  Wire.write(obj_amb_addr); // Or Wire.send(obj_amb_addr)?
+  Wire.send(obj_amb_addr); // Or Wire.write(obj_amb_addr)?
   Wire.endTransmission(I2C_NOSTOP);
   
   // Read
@@ -90,7 +90,7 @@ float temperature(int address, int obj_amb_addr) {
   Wire.requestFrom(device,2); //Buffer is empty?
   data_low = Wire.read();
   data_high = Wire.read();
-  //Serial.println(int(data_low));
+  Serial.println(int(data_low));
   pec = Wire.read();
   Wire.endTransmission();
 
