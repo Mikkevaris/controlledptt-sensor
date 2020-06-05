@@ -1,3 +1,4 @@
+
 /****************************************************************************** 
 Arduino or similar board to read temperature from one MLX90614 or similar
 infrared temperature sensor. Reads the temperature in Celcius and 
@@ -20,7 +21,9 @@ Arduino 1.6.9
 SparkFun IR Thermometer Evaluation Board - MLX90614
 ******************************************************************************/
 
-#include <i2cmaster.h>
+//#include <i2cmaster.h>
+#include <i2c_t3.h> //Enhanced I2C library for Teensy 3.x & LC devices (Works only with Teensy LC and 3.x boards).
+
 
 // Address for I2C communication for sensor
 // If address was changed, it can be checked using sketch
@@ -32,29 +35,31 @@ int sensor_address = 0x50<<1;   // Shift the address 1 bit right, the
 int obj_temp_address = 0x07;    // address to read object temperature from sensor
 int amb_temp_address = 0x06;    // address to read ambient temperature from sensor
 
-float obj_temp = 0;             // Sesnor measures temperature from the object
+float obj_temp = 0;             // Sensor measures temperature from the object
 float amb_temp = 0;             // and on its shell
 int counter = 0;                // to average measurements
 
 void setup() 
 {
   Serial.begin(9600);                       // Initialize Serial to log output
-  i2c_init();                               // Initialise the I2C bus.
+  //i2c_init();                               // Initialise the I2C bus.'
+  Wire.begin();
   PORTC = (1 << PORTC4) | (1 << PORTC5);    // Enable pullups.
 }
 
 void loop() 
 {
   // read the temperatures from sensor
-  obj_temp = temperature(sensor_address, obj_temp);
-  amb_temp = temperature(sensor_address, amb_temp_address);
-
+  obj_temp += temperature(sensor_address, obj_temp_address);
+  amb_temp += temperature(sensor_address, amb_temp_address);
+  counter++;
+  
 
   if(counter == 5)
   {
     obj_temp = obj_temp / 5;
     amb_temp = amb_temp / 5;
-    Serial.println(String(obj_temp, 2) + " " + String(amb_temp, 2));
+    Serial.println("Object: " + String(obj_temp, 2) + " Ambient: " + String(amb_temp, 2));
     obj_temp = 0;
     amb_temp = 0;
     counter = 0;
@@ -71,15 +76,23 @@ float temperature(int address, int obj_amb_addr) {
   int pec = 0;
 
   // Write
-  i2c_start_wait(device + I2C_WRITE);
-  i2c_write(obj_amb_addr); // this is address for object temperature
-
+  //i2c_start_wait(device + I2C_WRITE);
+  //i2c_write(obj_amb_addr); // this is address for object temperature
+  Wire.beginTransmission(device);
+  Wire.write(obj_amb_addr); // Or Wire.send(obj_amb_addr)?
+  Wire.endTransmission(I2C_NOSTOP);
+  
   // Read
-  i2c_rep_start(device + I2C_READ);
-  data_low = i2c_readAck();       // Read 1 byte and then send ack.
-  data_high = i2c_readAck();      // Read 1 byte and then send ack.
-  pec = i2c_readNak();
-  i2c_stop();
+  //i2c_rep_start(device + I2C_READ);
+  //data_low = i2c_readAck();       // Read 1 byte and then send ack.
+  //data_high = i2c_readAck();      // Read 1 byte and then send ack.
+  //pec = i2c_readNak();
+  //i2c_stop();
+  Wire.requestFrom(device,2);
+  data_low = Wire.read();
+  data_high = Wire.read();
+  pec = Wire.read();
+  Wire.endTransmission();
 
   // This converts high and low bytes together and processes temperature, 
   // MSB is a error bit and is ignored for temps.
