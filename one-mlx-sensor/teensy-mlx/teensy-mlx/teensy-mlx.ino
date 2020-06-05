@@ -1,6 +1,5 @@
-
 /****************************************************************************** 
-Arduino or similar board to read temperature from one MLX90614 or similar
+Teensy or similar board to read temperature from one MLX90614 or similar
 infrared temperature sensor. Reads the temperature in Celcius and 
 send the data via serial port each second. To see output in
 Arduino studio, open serial monitor and seth the baud rate to 9600.
@@ -18,7 +17,7 @@ MLX90614 ------------- Arduino or compatible board
 
 Development environment specifics:
 Arduino 1.6.9
-SparkFun IR Thermometer Evaluation Board - MLX90614
+SparkFun IR Thermometer Evaluation Board - MLX90614 FIX THIS!
 ******************************************************************************/
 
 //#include <i2cmaster.h>
@@ -43,8 +42,10 @@ void setup()
 {
   Serial.begin(9600);                       // Initialize Serial to log output
   //i2c_init();                               // Initialise the I2C bus.'
-  Wire.begin();
-  // PORTC = (1 << PORTC4) | (1 << PORTC5);    // Enable pullups.
+  Wire.begin(I2C_MASTER, 0, I2C_PINS_18_19, I2C_PULLUP_EXT); //initializes I2C as Master mode, external pullups, 100kHz rate,
+                                                             //SCL pin 19, SDA pin 18.
+
+  //PORTC = (1 << PORTC4) | (1 << PORTC5);    // put Port C bit 4 and 5 HIGH and Enable pullups.
 }
 
 void loop() 
@@ -53,8 +54,6 @@ void loop()
   obj_temp += temperature(sensor_address, obj_temp_address);
   amb_temp += temperature(sensor_address, amb_temp_address);
   counter++;
-  
-
   if(counter == 5)
   {
     obj_temp = obj_temp / 5;
@@ -79,7 +78,7 @@ float temperature(int address, int obj_amb_addr) {
   //i2c_start_wait(device + I2C_WRITE);
   //i2c_write(obj_amb_addr); // this is address for object temperature
   Wire.beginTransmission(device);
-  Wire.send(obj_amb_addr); // Or Wire.send(obj_amb_addr)?
+  Wire.write(obj_amb_addr); // Or Wire.send(obj_amb_addr)?
   Wire.endTransmission(I2C_NOSTOP);
   
   // Read
@@ -88,9 +87,10 @@ float temperature(int address, int obj_amb_addr) {
   //data_high = i2c_readAck();      // Read 1 byte and then send ack.
   //pec = i2c_readNak();
   //i2c_stop();
-  Wire.requestFrom(device,2);
+  Wire.requestFrom(device,2); //Buffer is empty?
   data_low = Wire.read();
   data_high = Wire.read();
+  //Serial.println(int(data_low));
   pec = Wire.read();
   Wire.endTransmission();
 
@@ -103,7 +103,7 @@ float temperature(int address, int obj_amb_addr) {
 
   // This masks off the error bit of the high byte, then moves it left 
   // 8 bits and adds the low byte.
-  tempData = (double)(((data_high & 0x007F) << 8) + data_low);
+  tempData = (double)((((data_high  & 0x007F) << 8)) + data_low);
   tempData = (tempData * tempFactor) - 0.01;
   float celcius = tempData - 273.15;
   
