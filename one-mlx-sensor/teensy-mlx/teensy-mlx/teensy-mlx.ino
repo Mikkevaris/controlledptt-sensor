@@ -4,35 +4,26 @@ infrared temperature sensor. Reads the temperature in Celcius and
 send the data via serial port each second. To see output in
 Arduino studio, open serial monitor and seth the baud rate to 9600.
 
-Based on:
-Infrared Thermometer MLX90614
-by Jaime Patarroyo
+credit to.. https://github.com/adafruit/Adafruit-MLX90614-Library 
+Written by Limor Fried/Ladyada
 
 Hardware Hookup (if you're not using the eval board):
-MLX90614 ------------- Arduino or compatible board
+MLX90614 ------------- Teensy 3.x or compatible board
   VDD ------------------ 3.3V
   VSS ------------------ GND
-  SDA ------------------ SDA (A4 on older boards)
-  SCL ------------------ SCL (A5 on older boards)
+  SDA ------------------ PIN 18
+  SCL ------------------ PIN 19
 
 Development environment specifics:
-Arduino 1.6.9
-SparkFun IR Thermometer Evaluation Board - MLX90614 FIX THIS!
+Arduino 1.8.12
+SparkFun IR Thermometer Evaluation Board - MLX90614
 ******************************************************************************/
 
-//#include <i2cmaster.h>
-#include <i2c_t3.h> //Enhanced I2C library for Teensy 3.x & LC devices (Works only with Teensy LC and 3.x boards).
-
-
-// Address for I2C communication for sensor
-// If address was changed, it can be checked using sketch
-// in Utils folder of repository
-
-int sensor_address = 0x50<<1;   // Shift the address 1 bit right, the 
-                                // I2C master library only needs the 7 most 
-                                // significant bits for the address.
-int obj_temp_address = 0x07;    // address to read object temperature from sensor
-int amb_temp_address = 0x06;    // address to read ambient temperature from sensor
+#include <Adafruit_MLX90614.h> // If address was changed, it can be checked using sketch
+                               // in Utils folder of repository. Change the correct address
+                               // manually in Adafruit_MLX90614.h file.
+#include <Wire.h>
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 float obj_temp = 0;             // Sensor measures temperature from the object
 float amb_temp = 0;             // and on its shell
@@ -40,20 +31,17 @@ int counter = 0;                // to average measurements
 
 void setup() 
 {
-  Serial.begin(9600);                       // Initialize Serial to log output
-  //i2c_init();                               // Initialise the I2C bus.'
-  Wire.begin(I2C_MASTER, 0, I2C_PINS_18_19, I2C_PULLUP_EXT); //initializes I2C as Master mode, external pullups, 100kHz rate,
-                                                             //SCL pin 19, SDA pin 18.
+  Serial.begin(9600);
 
-  //PORTC = (1 << PORTC4) | (1 << PORTC5);    // put Port C bit 4 and 5 HIGH and Enable pullups.
+  mlx.begin(); //Initialise the I2C bus.
 }
-
 void loop() 
 {
   // read the temperatures from sensor
-  obj_temp += temperature(sensor_address, obj_temp_address);
-  amb_temp += temperature(sensor_address, amb_temp_address);
+  obj_temp += mlx.readObjectTempC();
+  amb_temp += mlx.readAmbientTempC();
   counter++;
+
   if(counter == 5)
   {
     obj_temp = obj_temp / 5;
@@ -62,51 +50,7 @@ void loop()
     obj_temp = 0;
     amb_temp = 0;
     counter = 0;
+    Serial.println();
   }
   delay(200);
-}
-
-float temperature(int address, int obj_amb_addr) {
-  // perform the actual temperature read using
-  // I2C library
-  int device = address;
-  int data_low = 0;
-  int data_high = 0;
-  int pec = 0;
-
-  // Write
-  //i2c_start_wait(device + I2C_WRITE);
-  //i2c_write(obj_amb_addr); // this is address for object temperature
-  Wire.beginTransmission(device);
-  Wire.send(obj_amb_addr); // Or Wire.write(obj_amb_addr)?
-  Wire.endTransmission(I2C_NOSTOP);
-  
-  // Read
-  //i2c_rep_start(device + I2C_READ);
-  //data_low = i2c_readAck();       // Read 1 byte and then send ack.
-  //data_high = i2c_readAck();      // Read 1 byte and then send ack.
-  //pec = i2c_readNak();
-  //i2c_stop();
-  Wire.requestFrom(device,2); //Buffer is empty?
-  data_low = Wire.read();
-  data_high = Wire.read();
-  Serial.println(int(data_low));
-  pec = Wire.read();
-  Wire.endTransmission();
-
-  // This converts high and low bytes together and processes temperature, 
-  // MSB is a error bit and is ignored for temps.
-  double tempFactor = 0.02;       // 0.02 degrees per LSB (measurement 
-                                  // resolution of the MLX90614).
-  double tempData = 0x0000;       // Zero out the data
-  int frac;                       // Data past the decimal point
-
-  // This masks off the error bit of the high byte, then moves it left 
-  // 8 bits and adds the low byte.
-  tempData = (double)((((data_high  & 0x007F) << 8)) + data_low);
-  tempData = (tempData * tempFactor) - 0.01;
-  float celcius = tempData - 273.15;
-  
-  // Returns temperature un Celcius.
-  return celcius;
 }

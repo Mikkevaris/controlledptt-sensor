@@ -21,8 +21,7 @@ Arduino 1.6.9
 SparkFun IR Thermometer Evaluation Board - MLX90614
 ******************************************************************************/
 
-//#include <i2cmaster.h>
-#include <i2c_t3.h> //Enhanced I2C library for Teensy 3.x & LC devices (Works only with Teensy LC and 3.x boards).
+#include <i2cmaster.h>
 
 
 // Address for I2C communication for sensor
@@ -42,9 +41,9 @@ int counter = 0;                // to average measurements
 void setup() 
 {
   Serial.begin(9600);                       // Initialize Serial to log output
-  //i2c_init();                               // Initialise the I2C bus.'
-  Wire.begin();
-  // PORTC = (1 << PORTC4) | (1 << PORTC5);    // Enable pullups.
+  i2c_init();                               // Initialise the I2C bus.'
+
+  PORTC = (1 << PORTC4) | (1 << PORTC5);    // Enable pullups.
 }
 
 void loop() 
@@ -76,23 +75,15 @@ float temperature(int address, int obj_amb_addr) {
   int pec = 0;
 
   // Write
-  //i2c_start_wait(device + I2C_WRITE);
-  //i2c_write(obj_amb_addr); // this is address for object temperature
-  Wire.beginTransmission(device);
-  Wire.send(obj_amb_addr); // Or Wire.send(obj_amb_addr)?
-  Wire.endTransmission(I2C_NOSTOP);
+  i2c_start_wait(device + I2C_WRITE);
+  i2c_write(obj_amb_addr); // this is address for object temperature
   
   // Read
-  //i2c_rep_start(device + I2C_READ);
-  //data_low = i2c_readAck();       // Read 1 byte and then send ack.
-  //data_high = i2c_readAck();      // Read 1 byte and then send ack.
-  //pec = i2c_readNak();
-  //i2c_stop();
-  Wire.requestFrom(device,2);
-  data_low = Wire.read();
-  data_high = Wire.read();
-  pec = Wire.read();
-  Wire.endTransmission();
+  i2c_rep_start(device + I2C_READ);
+  data_low = i2c_readAck();       // Read 1 byte and then send ack.
+  data_high = i2c_readAck();      // Read 1 byte and then send ack.
+  pec = i2c_readNak();
+  i2c_stop();
 
   // This converts high and low bytes together and processes temperature, 
   // MSB is a error bit and is ignored for temps.
