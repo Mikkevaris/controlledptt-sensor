@@ -4,8 +4,8 @@ infrared temperature sensor. Reads the temperature in Celcius and
 send the data via serial port each second. To see output in
 Arduino studio, open serial monitor and seth the baud rate to 9600.
 
-credit to.. https://github.com/adafruit/Adafruit-MLX90614-Library 
 Written by Limor Fried/Ladyada
+https://github.com/adafruit/Adafruit-MLX90614-Library 
 
 Hardware Hookup (if you're not using the eval board):
 MLX90614 ------------- Teensy 3.x or compatible board
@@ -23,7 +23,8 @@ SparkFun IR Thermometer Evaluation Board - MLX90614
                                // in Utils folder of repository. Change the correct address
                                // manually in Adafruit_MLX90614.h file.
 #include <Wire.h>
-Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+
+Adafruit_MLX90614 mlx = Adafruit_MLX90614(); // create an instance of the Sensor class
 
 float obj_temp = 0;             // Sensor measures temperature from the object
 float amb_temp = 0;             // and on its shell
