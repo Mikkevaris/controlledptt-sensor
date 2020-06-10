@@ -8,8 +8,8 @@ Hardware Hookup (if you're not using the eval board):
 MLX90614 ------------- Teensy 3.x or compatible board
   VDD ------------------ 3.3V
   VSS ------------------ GND
-  SDA ------------------ PIN 18 (SDA PIN if using arduino)
-  SCL ------------------ PIN 19 (SCL PIN if using arduino)
+  SDA ------------------ PIN 18 (SDA PIN if using arduino board)
+  SCL ------------------ PIN 19 (SCL PIN if using arduino board)
 
 Development environment specifics:
 Arduino 1.8.12
