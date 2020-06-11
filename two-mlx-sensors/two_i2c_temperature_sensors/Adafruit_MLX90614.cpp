@@ -119,7 +119,7 @@ float Adafruit_MLX90614::readTemp(uint8_t reg) {
 
   temp = read16(reg); 
   temp *= .02; // 0.02 degrees per LSB (measurement resolution of the MLX90614).
-  temp -= 273.15;//Change temperature to celcius.
+  temp -= 273.15; //Change temperature to celcius.
   return temp;
 }
 

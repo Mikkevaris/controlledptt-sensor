@@ -1,7 +1,7 @@
 
 /*
 * A class for interfacing the Melexis 90620 Sensor from a Teensy 3.1
-* Uses the 2c_t3 library for communication with the sensor
+* Uses the i2c_t3 library for communication with the sensor
 * 2013 by Felix Bonowski
 * Based on a forum post by maxbot: http://forum.arduino.cc/index.php/topic,126244.msg949212.html#msg949212
 * This code is in the public domain.

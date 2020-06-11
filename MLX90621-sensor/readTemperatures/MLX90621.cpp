@@ -12,7 +12,7 @@
 
 void MLX90621::initialise(int refrate) {
 	refreshRate = refrate;
-	Wire.begin(I2C_MASTER, 0, I2C_PINS_18_19, I2C_PULLUP_EXT, I2C_RATE_100);
+	Wire.begin(I2C_MASTER, 0, I2C_PINS_18_19, I2C_PULLUP_EXT, I2C_RATE_100); //Intialise the I2C bus.
 	delay(5);
 	readEEPROM();
 	writeTrimmingValue();

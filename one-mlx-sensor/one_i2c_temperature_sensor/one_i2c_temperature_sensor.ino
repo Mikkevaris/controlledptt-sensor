@@ -1,11 +1,11 @@
 /****************************************************************************** 
-Teensy or similar board to read temperature from one MLX90614 or similar
+Arduino, Teensy 3.x or similar board to read temperature from one MLX90614 or similar
 infrared temperature sensor. Reads the temperature in Celcius and 
 send the data via serial port each second. To see output in
 Arduino studio, open serial monitor and seth the baud rate to 9600.
 
 Hardware Hookup (if you're not using the eval board):
-MLX90614 ------------- Teensy 3.x or compatible board
+MLX90614 ------------- Arduino, Teensy 3.x or compatible board
   VDD ------------------ 3.3V
   VSS ------------------ GND
   SDA ------------------ PIN 18 (SDA PIN if using arduino board)
@@ -15,7 +15,6 @@ Development environment specifics:
 Arduino 1.8.12
 SparkFun IR Thermometer Evaluation Board - MLX90614
 
-https://github.com/adafruit/Adafruit-MLX90614-Library 
 ******************************************************************************/
 
 #include "Adafruit_MLX90614.h" // If address was changed, it can be checked using sketch
