@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BaseSensor;
 
 namespace pc_dummy
 {
-    public partial class DummySensorForm : Form
+    public partial class DummySensorForm : BaseSensorForm
     {
         // Generates random temperature
         private int _generatedTemp = 0;
@@ -26,6 +27,7 @@ namespace pc_dummy
         {
             _generatedTemp = rand.Next(0, 100);
             txtTemperature.Text = _generatedTemp.ToString();
+            SendTemperature(Convert.ToDouble(_generatedTemp));
         }
 
         private void btnGenTemp_Click(object sender, EventArgs e)

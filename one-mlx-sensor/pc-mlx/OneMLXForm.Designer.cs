@@ -1,6 +1,6 @@
 ﻿namespace PcMlx
 {
-    partial class ArduinoMLXForm
+    partial class OneMLXForm
     {
         /// <summary>
         /// Required designer variable.
@@ -69,7 +69,7 @@
             this.gbArduino.Size = new System.Drawing.Size(280, 411);
             this.gbArduino.TabIndex = 34;
             this.gbArduino.TabStop = false;
-            this.gbArduino.Text = "Arduino connection";
+            this.gbArduino.Text = "Controller connection";
             // 
             // btnClearData
             // 
@@ -223,14 +223,14 @@
             this.txtSend.Size = new System.Drawing.Size(145, 20);
             this.txtSend.TabIndex = 4;
             // 
-            // ArduinoMLXForm
+            // OneMLXForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(306, 435);
             this.Controls.Add(this.gbArduino);
-            this.Name = "ArduinoMLXForm";
-            this.Text = "Arduino MLX Sensor";
+            this.Name = "OneMLXForm";
+            this.Text = "One MLX Sensor";
             this.gbArduino.ResumeLayout(false);
             this.gbArduino.PerformLayout();
             this.ResumeLayout(false);

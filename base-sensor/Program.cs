@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PcMlx
+namespace BaseSensor
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace PcMlx
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new OneMLXForm());
+            Application.Run(new BaseSensorForm());
         }
     }
 }

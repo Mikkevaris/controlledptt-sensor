@@ -8,10 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BaseSensor;
 
 namespace PcMlx
 {
-    public partial class ArduinoMLXForm : Form
+    public partial class OneMLXForm : BaseSensorForm
     {
         // COM port connection vars
         private SerialPort _comPort = null; // com port connection
@@ -20,7 +21,7 @@ namespace PcMlx
 
         private bool _comConnected = false; // variable indicating if connection is open
 
-        public ArduinoMLXForm()
+        public OneMLXForm()
         {
             InitializeComponent();
             cbBaudRate.SelectedIndex = 6;
