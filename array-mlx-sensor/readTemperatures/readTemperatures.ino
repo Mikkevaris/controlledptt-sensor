@@ -37,23 +37,13 @@ void setup(){
 void loop(){
   sensor.measure(); //get new readings from the sensor
   for(int y=0;y<4;y++){ //go through all the rows
-    //Serial.print("[");
-    
+ 
     for(int x=0;x<16;x++){ //go through all the columns
       double tempAtXY= sensor.getTemperature(y+x*4); // extract the temperature at position x/y
       Serial.print(tempAtXY);
       Serial.print("\t");
-         
-      if (x<15) Serial.print(" ");
-    }
-    //Serial.print("]");
-    if (y<3)
-    {
-      //Serial.print("~"); 
-      Serial.println();
     }
   }
   Serial.print("\n");
   delay(1000);
-  Serial.println();
 };

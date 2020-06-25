@@ -62,16 +62,14 @@ void loop()
   {
     obj_temp1 = obj_temp1 / 5;
     amb_temp1 = amb_temp1 / 5;
-    Serial.println("Object1: " + String(obj_temp1, 2) + " Ambient1: " + String(amb_temp1, 2));
     obj_temp2 = obj_temp2 / 5;
     amb_temp2 = amb_temp2 / 5;
-    Serial.println("Object2: " + String(obj_temp2, 2) + " Ambient2: " + String(amb_temp2, 2));
+    Serial.println(String(obj_temp1,2) + " " + String(amb_temp1,2) + " " + String(obj_temp2,2) + " " + String(amb_temp2,2)); // It must be printed like this so that C# visualisation works.
     obj_temp1 = 0;
     amb_temp1 = 0;
     obj_temp2 = 0;
     amb_temp2 = 0;
     counter = 0;
-    Serial.println();
   }
   delay(200);
    

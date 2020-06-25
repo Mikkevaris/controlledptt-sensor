@@ -45,11 +45,10 @@ void loop()
   {
     obj_temp = obj_temp / 5;
     amb_temp = amb_temp / 5;
-    Serial.println("Object: " + String(obj_temp, 2) + " Ambient: " + String(amb_temp, 2));
+    Serial.println(String(obj_temp, 2) + " " + String(amb_temp, 2));
     obj_temp = 0;
     amb_temp = 0;
     counter = 0;
-    Serial.println();
   }
   delay(200);
 }
