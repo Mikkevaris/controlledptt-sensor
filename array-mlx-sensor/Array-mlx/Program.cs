@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace oneMlxSensor
+namespace array_mlx
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace oneMlxSensor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new OneMLXForm());
+            Application.Run(new ArraySensor());
         }
     }
 }

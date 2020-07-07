@@ -1,4 +1,4 @@
-﻿namespace PcMlx
+﻿namespace twoMlxSensors
 {
     partial class TwoMLXForm
     {
@@ -204,6 +204,7 @@
             this.btnSendRedBoard.TabIndex = 5;
             this.btnSendRedBoard.Text = "Send";
             this.btnSendRedBoard.UseVisualStyleBackColor = true;
+            this.btnSendRedBoard.Click += new System.EventHandler(this.BtnSendRedBoard_Click);
             // 
             // btnGetComPorts
             // 

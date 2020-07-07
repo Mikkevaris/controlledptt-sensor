@@ -1,4 +1,4 @@
-﻿namespace pc_mlx
+﻿namespace array_mlx
 {
     partial class ArraySensor
     {
@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.gbArduino = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.txtCalculate = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -115,6 +116,7 @@
             // 
             // gbArduino
             // 
+            this.gbArduino.Controls.Add(this.label2);
             this.gbArduino.Controls.Add(this.btnSelectAll);
             this.gbArduino.Controls.Add(this.txtCalculate);
             this.gbArduino.Controls.Add(this.label1);
@@ -137,6 +139,15 @@
             this.gbArduino.TabIndex = 36;
             this.gbArduino.TabStop = false;
             this.gbArduino.Text = "Controller connection";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(304, 68);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(113, 13);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "Average Temperature:";
             // 
             // btnSelectAll
             // 
@@ -1204,6 +1215,7 @@
             this.btnSendRedBoard.TabIndex = 5;
             this.btnSendRedBoard.Text = "Send";
             this.btnSendRedBoard.UseVisualStyleBackColor = true;
+            this.btnSendRedBoard.Click += new System.EventHandler(this.BtnSendRedBoard_Click);
             // 
             // btnGetComPorts
             // 
@@ -1271,8 +1283,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(825, 488);
             this.Controls.Add(this.gbArduino);
+            this.MinimumSize = new System.Drawing.Size(841, 527);
             this.Name = "ArraySensor";
             this.Text = "Array sensor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ArraySensor_FormClosing);
             this.gbArduino.ResumeLayout(false);
             this.gbArduino.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -1363,6 +1377,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtCalculate;
         private System.Windows.Forms.Button btnSelectAll;
+        private System.Windows.Forms.Label label2;
     }
 }
 

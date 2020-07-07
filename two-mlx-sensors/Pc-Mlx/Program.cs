@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PcMlx
+namespace twoMlxSensors
 {
     static class Program
     {

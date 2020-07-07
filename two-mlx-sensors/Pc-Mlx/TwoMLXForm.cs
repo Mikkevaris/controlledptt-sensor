@@ -9,8 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BaseSensor;
+using System.Globalization;
+using Serilog;
 
-namespace PcMlx
+namespace twoMlxSensors
+
 {
     public partial class TwoMLXForm : BaseSensorForm
     {
@@ -20,11 +23,26 @@ namespace PcMlx
         private string _received = string.Empty; // String to keep recieved data.
 
         private bool _comConnected = false; // Variable indicating if connection is open.
-        
+
+        private bool _sendGoing = false;
+
+        private Timer _sendTimer = new Timer()
+        {
+            Interval = 1000
+        };
+
         public TwoMLXForm()
         {
             InitializeComponent();
-            cbBaudRate.SelectedIndex = 6; 
+            cbBaudRate.SelectedIndex = 6;
+            _sendTimer.Tick += new EventHandler(this.sendDataTimer_Tick);
+            btnSendRedBoard.Enabled = false;
+
+            // To log information.
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File("C:/Users/mikke/controlledptt-sensor/MainApp/bin/Debug/logfile.json", shared: true)
+                .CreateLogger();
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -92,6 +110,7 @@ namespace PcMlx
                 txtConnectedStatus.BackColor = Color.Green;
                 _comConnected = true;
                 btnSendRedBoard.Enabled = true;
+                Log.Information("Connected to Board.");
             }
             else
             {
@@ -106,7 +125,7 @@ namespace PcMlx
                 txtConnectedStatus.BackColor = Color.Red;
                 btnSendRedBoard.Enabled = false;
                 _comConnected = false;
-
+                Log.Information("Disconnected from Board.");
             }
         }
 
@@ -114,5 +133,38 @@ namespace PcMlx
         {
             txtAllRecievedData.Clear(); 
         }
+
+        // Two strings to send data to the Main App.
+        public string AvgObjTemperature { get; set; }
+        public string AvgAmbTemperature { get; set; }
+        private void BtnSendRedBoard_Click(object sender, EventArgs e)
+        {
+            if (!_sendGoing)
+            {
+                _sendGoing = true;
+                _sendTimer.Start();
+                btnSendRedBoard.Text = "Stop Sending";
+                Log.Information("Sending temperature data started.");
+            }
+            else
+            {
+                _sendGoing = false;
+                _sendTimer.Stop();
+                btnSendRedBoard.Text = "Send";
+                Log.Information("Sending temperature data stopped.");
+            }
+        }
+        private void sendDataTimer_Tick(object sender, EventArgs e)
+        {
+            double.TryParse(txtObj1Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj1temp);
+            double.TryParse(txtObj2Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj2temp);
+            double.TryParse(txtAmb1Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double amb1temp);
+            double.TryParse(txtAmb2Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double amb2temp);
+
+            AvgObjTemperature = ((obj1temp + obj2temp) / 2).ToString("F");
+            AvgAmbTemperature = ((amb1temp + amb2temp) / 2).ToString("F");
+        }
+
+   
     }
 }

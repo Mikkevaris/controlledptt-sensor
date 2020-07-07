@@ -11,13 +11,14 @@ using System.Windows.Forms;
 using BaseSensor;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using Serilog;
+using Serilog.Sinks.File;
 
-
-namespace pc_mlx
+namespace array_mlx
 {
     public partial class ArraySensor : BaseSensorForm
     {
-
+        
         // COM port connection vars.
         private SerialPort _comPort = null; // COM port connection.
 
@@ -25,15 +26,32 @@ namespace pc_mlx
 
         private bool _comConnected = false; // Variable indicating if connection is open.
 
-        // Variables for calculating average temperature of chosen cells.
-        private int howManyCellsChosen = 0; 
+        private bool _sendGoing = false;
 
-        private double temperatureOfCells = 0; 
+        private Timer _sendTimer = new Timer()
+        {
+            Interval = 1000
+        };
+
+        // Variables for calculating average temperature of chosen cells.
+        private int _howManyCellsChosen = 0; 
+
+        private double _totalTemperatureOfCells = 0;
+
 
         public ArraySensor()
         {
             InitializeComponent();
             cbBaudRate.SelectedIndex = 6;
+            _sendTimer.Tick += new EventHandler(this.sendDataTimer_Tick);
+            btnSendRedBoard.Enabled = false;
+
+            // To log information.
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File("C:/Users/mikke/controlledptt-sensor/MainApp/bin/Debug/logfile.json", shared: true)
+                .CreateLogger();
+
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -97,6 +115,7 @@ namespace pc_mlx
                         "Something went wrong. Check no other app is connected to " + portName + ".",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
+                    Log.Error(ex.Message);
                 }
 
                 btnConnRedBoard.Text = "Disconnect";
@@ -104,6 +123,7 @@ namespace pc_mlx
                 txtConnectedStatus.BackColor = Color.Green;
                 _comConnected = true;
                 btnSendRedBoard.Enabled = true;
+                Log.Information("Connected to Board.");
 
             }
             else
@@ -119,6 +139,7 @@ namespace pc_mlx
                 txtConnectedStatus.BackColor = Color.Red;
                 btnSendRedBoard.Enabled = false;
                 _comConnected = false;
+                Log.Information("Disconnected from Board.");
 
             }
         }
@@ -127,8 +148,8 @@ namespace pc_mlx
             txtAllReceivedData.Clear();
             txtCalculate.Clear();
             ResetCells(this, "", Color.White, typeof(Button));
-            temperatureOfCells = 0;
-            howManyCellsChosen = 0;
+            _totalTemperatureOfCells = 0;
+            _howManyCellsChosen = 0;
             txtCalculate.Text = "0.00";
         }
 
@@ -157,21 +178,22 @@ namespace pc_mlx
         {
             Button button = sender as Button;
             button.Enabled = false;   // Cell can not be selected more than once.
-            howManyCellsChosen++;
+            _howManyCellsChosen++;
         }
 
         private void BtnSelectAll_Click(object sender, EventArgs e)
         {
-            howManyCellsChosen = 64;
+            _howManyCellsChosen = 64;
             foreach (Control button in panel1.Controls)
             {
                 button.Enabled = false;
             }           
         }
+
         // When TextChanged event of button is raised it invokes this method.
         private void CalculateAvg(object sender, EventArgs e)
         {
-            temperatureOfCells = 0;
+            _totalTemperatureOfCells = 0;
 
             // Look through all the Cells that was chosen and add their temperatures. 
             foreach (Control button in panel1.Controls)
@@ -179,28 +201,27 @@ namespace pc_mlx
                 if (button.Enabled == false)
                 {
                     double.TryParse(button.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double temperature);
-                    temperatureOfCells += temperature;
+                    _totalTemperatureOfCells += temperature;
                 }
             }
-            if (howManyCellsChosen != 0)
-            {
-                txtCalculate.Text = (temperatureOfCells / howManyCellsChosen).ToString("F");    // Print the average with two decimals.
-            }
 
-            
+            if (_howManyCellsChosen != 0)
+            {
+                txtCalculate.Text = (_totalTemperatureOfCells / _howManyCellsChosen).ToString("F");    // Print the average with two decimals.
+            }
         }
 
         // Two methods to visualize which cells has been chosen:
 
-        // To see which cells has been chosen.
+        // To see whenever cell gets disabled.
         private void Cell_EnableChanged(object sender, EventArgs e)
         {
             Button button = sender as Button;
             button.ForeColor = Color.White;
         }
 
-        // Turns chosen cell's text to white.
-        private void Cell_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        // Turns disabled cell's text to white.
+        private void Cell_Paint(object sender, PaintEventArgs e)
         {
             dynamic button = sender as Button;
             dynamic drawBrush = new SolidBrush(button.ForeColor);
@@ -218,7 +239,7 @@ namespace pc_mlx
         {
             var temperatures = _received.Split('\t');
 
-            // Set the temperature values to buttons.
+            // Set the temperature values to cells.
             btn1.Text = temperatures[0]; btn2.Text = temperatures[1]; btn3.Text = temperatures[2]; btn4.Text = temperatures[3];
             btn5.Text = temperatures[4]; btn6.Text = temperatures[5]; btn7.Text = temperatures[6]; btn8.Text = temperatures[7];
             btn9.Text = temperatures[8]; btn10.Text = temperatures[9]; btn11.Text = temperatures[10]; btn12.Text = temperatures[11];
@@ -384,8 +405,44 @@ namespace pc_mlx
             }
             else
                 return Color.FromArgb(255, 255, 255);
-
         }
 
+        public string AvgTemperature { get; set; }  // String to send data to the Main App.
+
+        private void BtnSendRedBoard_Click(object sender, EventArgs e)
+        {
+            if (!_sendGoing)
+            {
+                _sendGoing = true;
+                _sendTimer.Start();
+                btnSendRedBoard.Text = "Stop Sending";
+                Log.Information("Sending temperature data started.");
+            }
+            else
+            {
+                _sendGoing = false;
+                _sendTimer.Stop();
+                btnSendRedBoard.Text = "Send";
+                AvgTemperature = null;
+                Log.Information("Sending temperature data stopped.");
+            }
+        }
+
+        private void sendDataTimer_Tick(object sender, EventArgs e)
+        {
+            AvgTemperature = txtCalculate.Text;
+        }
+        private void ArraySensor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_comPort != null)
+            {
+                if (_comPort.IsOpen)
+                {
+                    _comPort.Close();
+                    _comPort = null;
+                }
+            }
+        }
     }
+    
 }
