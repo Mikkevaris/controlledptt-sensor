@@ -81,6 +81,7 @@ namespace oneMlxSensor
                 Log.Error(ex.Message,"Wrong sensor connected.");
             }
 
+
         }
 
         private void btnGetComPorts_Click(object sender, EventArgs e)

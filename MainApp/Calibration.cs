@@ -89,6 +89,14 @@ namespace MainApp
             rtbObjTemp.Text = _objTemp.ToString();
             rtbCalObjTemp.Text = GetCalibratedObjectTemp(_objTemp).ToString();
             
+            // Sets the measured temperature from sensor to DataGrid's selected row's first index. 
+            if (dgCalibration.CurrentCell != null)
+            {
+                string address = dgCalibration.CurrentCellAddress.Y.ToString();     //To see which row is selected.
+                dgCalibration.Rows[Convert.ToInt32(address)].Cells[0].Value = _objTemp.ToString();
+            }
+            
+
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -116,6 +124,15 @@ namespace MainApp
         {
             _calTimer.Stop();
             _evtForm();
+        }
+
+        // Value in cell cannot be changed when value has been set.
+        private void DgCalibration_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgCalibration.CurrentCell.Value != null)
+            {
+                dgCalibration.CurrentCell.ReadOnly = true;
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace MainApp
 
         private bool _expGoing = false;
 
-        private double _globaltime = 0;
+        private double _time = 0;
 
         private string _tempSavePath = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -51,7 +51,7 @@ namespace MainApp
 
         private int _secondsTillEnd = 0;
 
-        //Forms
+        //Instances of forms.
         private ArraySensor array = new ArraySensor();
         private OneMLXForm oneMlxSensor = new OneMLXForm();
         private TwoMLXForm twoMlxSensors = new TwoMLXForm();
@@ -110,6 +110,8 @@ namespace MainApp
             LegendFontSize = 16,
             LegendTextColor = OxyColors.White
         };
+
+        // Scaling and setting the Graph.
         private void SetGraphData(PlotView pw, double x, double[] ys, bool isLaserGraph)
         {
             var xAxis = pw.Model.Axes[0];
@@ -156,7 +158,8 @@ namespace MainApp
             }
             pw.InvalidatePlot(false);
         }
-        // Helper logging methods
+
+        // Info methods
         private void AddInfo(string txt)
         {
             AppendText(rtbInfo, txt + "\n", Color.Black);
@@ -334,7 +337,7 @@ namespace MainApp
                 Log.Information("Experiment started.");
                 if (btnSelectSensor.Enabled == false) // To see if sensor has been selected.
                 {
-                    // To see if send button is enabled.
+                    // To see if send button is enabled on sensor's interface.
                     if (array.AvgTemperature != null || oneMlxSensor.ObjectTemperature != null || twoMlxSensors.AvgObjTemperature != null)  
                     {
                         _expGoing = true;
@@ -397,7 +400,7 @@ namespace MainApp
 
         private void experimentTimer_Tick(object sender, EventArgs e)
         {
-            if (_secondsTillEnd <= 0)
+            if (_secondsTillEnd <= 0)   // If the time selected for the experiment has elapsed.
             {
 
                 _expGoing = false;
@@ -414,22 +417,21 @@ namespace MainApp
                     _isTempRecording = false;
                 }
             }
-            else
+            else    // Else plots and records temperature every timer tick.
             {
-                _globaltime += 1;
+                _time += 1;
                 if (cmbSensors.SelectedIndex == 0)
                 {
                     try
                     {                      
                         double objTemp = Convert.ToDouble(array.AvgTemperature);
-                        Calibration calibration = new Calibration();
-                        SetGraphData(pltObjTemp, _globaltime, new double[] { objTemp }, false);
+                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
                         if (_isTempRecording)
                         {
-                            _tempWriter.WriteLine(_globaltime.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
                         }
                     }
-                    catch (FormatException ex) { Log.Error(ex, "Error"); }
+                    catch (FormatException ex) { Log.Error(ex.ToString()); }
                 }
                 else if (cmbSensors.SelectedIndex == 1)
                 {
@@ -437,14 +439,14 @@ namespace MainApp
                     {
                         double objTemp = Convert.ToDouble(oneMlxSensor.ObjectTemperature, CultureInfo.InvariantCulture);
                         double ambTemp = Convert.ToDouble(oneMlxSensor.AmbientTemperature, CultureInfo.InvariantCulture);
-                        SetGraphData(pltObjTemp, _globaltime, new double[] { objTemp }, false);
-                        SetGraphData(pltAmbTemp, _globaltime, new double[] { ambTemp }, false);
+                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                        SetGraphData(pltAmbTemp, _time, new double[] { ambTemp }, false);
                         if (_isTempRecording)
                         {
-                            _tempWriter.WriteLine(_globaltime.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
                         }
                     }
-                    catch (FormatException ex) { Log.Error(ex, "Error"); }
+                    catch (FormatException ex) { Log.Error(ex.ToString()); }
                 }
                 else if (cmbSensors.SelectedIndex == 2)
                 {
@@ -452,20 +454,21 @@ namespace MainApp
                     {
                         double objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature, CultureInfo.InvariantCulture);
                         double ambTemp = Convert.ToDouble(twoMlxSensors.AvgAmbTemperature, CultureInfo.InvariantCulture);
-                        SetGraphData(pltObjTemp, _globaltime, new double[] { objTemp }, false);
-                        SetGraphData(pltAmbTemp, _globaltime, new double[] { ambTemp }, false);
+                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                        SetGraphData(pltAmbTemp, _time, new double[] { ambTemp }, false);
                         if (_isTempRecording)
                         {
-                            _tempWriter.WriteLine(_globaltime.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
                         }
                     }
-                    catch (FormatException ex) { Log.Error(ex, "Error"); }
+                    catch (FormatException ex) { Log.Error(ex.ToString()); }
                 }
                 txtExpTime.Text = TimeSpan.FromSeconds(_secondsTillEnd).ToString();
                 _secondsTillEnd -= 1;
             }                                   
         }
 
+        // Disposes all the forms when closing the main form. (Not sure if necessary).
         private void MainApp_FormClosing(object sender, FormClosingEventArgs e)
         {
             array.Dispose();
@@ -500,7 +503,7 @@ namespace MainApp
                 Log.Information("Calibration has started.");
                 calibration = new Calibration();
                 _calTimer.Start();
-                calibration._evtForm += new ShowFrm(CalibrationHelper);  // Method for enabling Calibration button from it's form.            
+                calibration._evtForm += new ShowFrm(CalibrationHelper);  // Method for enabling Calibration button from calibration form.            
                 calibration.Show();
             }
             else
@@ -510,11 +513,30 @@ namespace MainApp
         // Calibration timer needed for sending varying temperature value to the calibration form each second.
         private void calibrationTimer_Tick(object sender, EventArgs e)
         {
-            try
+            if (cmbSensors.SelectedIndex == 0)
             {
-                calibration._objTemp = Convert.ToDouble(array.AvgTemperature);
+                try
+                {
+                    calibration._objTemp = Convert.ToDouble(array.AvgTemperature);
+                }
+                catch { calibration._objTemp = 0; }
             }
-            catch { calibration._objTemp = 0; }
+            else if (cmbSensors.SelectedIndex == 1)
+            {
+                try
+                {
+                    calibration._objTemp = Convert.ToDouble(oneMlxSensor.ObjectTemperature, CultureInfo.InvariantCulture);
+                }
+                catch { calibration._objTemp = 0; }
+            }
+            else if (cmbSensors.SelectedIndex == 2)
+            {
+                try
+                {
+                    calibration._objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature, CultureInfo.InvariantCulture);
+                }
+                catch { calibration._objTemp = 0; }
+            }
             
         }
 
@@ -523,8 +545,6 @@ namespace MainApp
         {
             btnCalibration.Enabled = true;
             _calTimer.Stop();
-            textBox4.Text = calibration._sensorCalA.ToString();
-            textBox3.Text = calibration._sensorCalB.ToString();
         }
 
         private void BtnPIDControl_Click(object sender, EventArgs e)

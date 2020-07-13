@@ -49,14 +49,17 @@
             this.label22 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgCalibration = new System.Windows.Forms.DataGridView();
+            this.TempSensor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.RealTemp = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnCalculate = new System.Windows.Forms.Button();
             this.gbCalibration.SuspendLayout();
             this.gbAmbientTemp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRealAmbTemp)).BeginInit();
             this.gbObjectTemp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSensorCalB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSensorCalA)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgCalibration)).BeginInit();
             this.SuspendLayout();
             // 
             // gbCalibration
@@ -319,20 +322,49 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
-            // dataGridView1
+            // dgCalibration
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(261, 21);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(613, 297);
-            this.dataGridView1.TabIndex = 38;
+            this.dgCalibration.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgCalibration.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.TempSensor,
+            this.RealTemp});
+            this.dgCalibration.Location = new System.Drawing.Point(261, 21);
+            this.dgCalibration.MultiSelect = false;
+            this.dgCalibration.Name = "dgCalibration";
+            this.dgCalibration.Size = new System.Drawing.Size(344, 259);
+            this.dgCalibration.TabIndex = 38;
+            this.dgCalibration.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgCalibration_CellEnter);
+            // 
+            // TempSensor
+            // 
+            this.TempSensor.Frozen = true;
+            this.TempSensor.HeaderText = "Temperature from sensor";
+            this.TempSensor.Name = "TempSensor";
+            this.TempSensor.ReadOnly = true;
+            this.TempSensor.Width = 150;
+            // 
+            // RealTemp
+            // 
+            this.RealTemp.HeaderText = "Real temperature";
+            this.RealTemp.Name = "RealTemp";
+            this.RealTemp.Width = 150;
+            // 
+            // btnCalculate
+            // 
+            this.btnCalculate.Location = new System.Drawing.Point(261, 286);
+            this.btnCalculate.Name = "btnCalculate";
+            this.btnCalculate.Size = new System.Drawing.Size(140, 31);
+            this.btnCalculate.TabIndex = 39;
+            this.btnCalculate.Text = "Calculate";
+            this.btnCalculate.UseVisualStyleBackColor = true;
             // 
             // Calibration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(886, 330);
-            this.Controls.Add(this.dataGridView1);
+            this.ClientSize = new System.Drawing.Size(713, 330);
+            this.Controls.Add(this.btnCalculate);
+            this.Controls.Add(this.dgCalibration);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.gbCalibration);
@@ -348,7 +380,7 @@
             this.gbObjectTemp.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSensorCalB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSensorCalA)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgCalibration)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -376,6 +408,9 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgCalibration;
+        private System.Windows.Forms.Button btnCalculate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TempSensor;
+        private System.Windows.Forms.DataGridViewTextBoxColumn RealTemp;
     }
 }
