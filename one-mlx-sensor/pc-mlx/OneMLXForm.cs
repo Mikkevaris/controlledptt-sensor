@@ -67,20 +67,8 @@ namespace oneMlxSensor
             txtAllRecievedData.ScrollToCaret();
 
             var temperatures = _recieved.Split(' ');
-            //txtObjTemp.Text = temperatures[0];
-            //txtAmbTemp.Text = temperatures[1];
-
-
-            try
-            {
-                txtObjTemp.Text = temperatures[0];
-                txtAmbTemp.Text = temperatures[1];
-            }
-            catch (IndexOutOfRangeException ex)
-            {
-                Log.Error(ex.Message,"Wrong sensor connected.");
-            }
-
+            txtObjTemp.Text = temperatures[0];
+            txtAmbTemp.Text = temperatures[1];
 
         }
 

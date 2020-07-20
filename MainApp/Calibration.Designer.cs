@@ -53,6 +53,9 @@
             this.TempSensor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.RealTemp = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnCalculate = new System.Windows.Forms.Button();
+            this.pltCalibration = new OxyPlot.WindowsForms.PlotView();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.Button();
             this.gbCalibration.SuspendLayout();
             this.gbAmbientTemp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRealAmbTemp)).BeginInit();
@@ -304,19 +307,19 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(101, 287);
+            this.btnSave.Location = new System.Drawing.Point(73, 287);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(68, 31);
+            this.btnSave.Size = new System.Drawing.Size(55, 31);
             this.btnSave.TabIndex = 36;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "Save as";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(175, 287);
+            this.btnCancel.Location = new System.Drawing.Point(192, 287);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(68, 31);
+            this.btnCancel.Size = new System.Drawing.Size(52, 31);
             this.btnCancel.TabIndex = 37;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -351,23 +354,60 @@
             // 
             // btnCalculate
             // 
-            this.btnCalculate.Location = new System.Drawing.Point(261, 286);
+            this.btnCalculate.Location = new System.Drawing.Point(261, 287);
             this.btnCalculate.Name = "btnCalculate";
             this.btnCalculate.Size = new System.Drawing.Size(140, 31);
             this.btnCalculate.TabIndex = 39;
             this.btnCalculate.Text = "Calculate";
             this.btnCalculate.UseVisualStyleBackColor = true;
+            this.btnCalculate.Click += new System.EventHandler(this.BtnCalculate_Click);
+            // 
+            // pltCalibration
+            // 
+            this.pltCalibration.Location = new System.Drawing.Point(611, 12);
+            this.pltCalibration.Name = "pltCalibration";
+            this.pltCalibration.PanCursor = System.Windows.Forms.Cursors.Hand;
+            this.pltCalibration.Size = new System.Drawing.Size(534, 305);
+            this.pltCalibration.TabIndex = 44;
+            this.pltCalibration.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            this.pltCalibration.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.pltCalibration.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.Location = new System.Drawing.Point(134, 287);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(52, 31);
+            this.btnLoad.TabIndex = 45;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.BtnLoad_Click);
+            // 
+            // btnOK
+            // 
+            this.btnOK.Location = new System.Drawing.Point(12, 287);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(55, 31);
+            this.btnOK.TabIndex = 46;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.BtnOK_Click);
             // 
             // Calibration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(713, 330);
+            this.ClientSize = new System.Drawing.Size(1157, 330);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.btnLoad);
+            this.Controls.Add(this.pltCalibration);
             this.Controls.Add(this.btnCalculate);
             this.Controls.Add(this.dgCalibration);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.gbCalibration);
+            this.MaximumSize = new System.Drawing.Size(1173, 369);
+            this.MinimumSize = new System.Drawing.Size(1173, 369);
             this.Name = "Calibration";
             this.Text = "Calibration";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Calibration_FormClosing);
@@ -400,7 +440,6 @@
         private System.Windows.Forms.NumericUpDown nudSensorCalB;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.CheckBox cbNoObjCalibration;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.TextBox rtbCalObjTemp;
         private System.Windows.Forms.NumericUpDown nudSensorCalA;
@@ -412,5 +451,9 @@
         private System.Windows.Forms.Button btnCalculate;
         private System.Windows.Forms.DataGridViewTextBoxColumn TempSensor;
         private System.Windows.Forms.DataGridViewTextBoxColumn RealTemp;
+        private OxyPlot.WindowsForms.PlotView pltCalibration;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.CheckBox cbNoObjCalibration;
+        private System.Windows.Forms.Button btnOK;
     }
 }

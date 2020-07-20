@@ -21,7 +21,7 @@ SparkFun IR Thermometer Evaluation Board - MLX90614
 #include <Wire.h>
 
 //Define device's addresses
-int device1Address = 0x0A;   // If addresses have been changed, it can be checked using sketch                                                 
+int device1Address = 0x0A;   // If addresses has been changed, it can be checked using sketch                                                 
 int device2Address = 0x50;   // in Utils folder of repository.
 
 //Create two instances of the sensor class.

@@ -56,7 +56,6 @@ namespace MainApp
         private OneMLXForm oneMlxSensor = new OneMLXForm();
         private TwoMLXForm twoMlxSensors = new TwoMLXForm();
         private Calibration calibration = new Calibration();
-        private PID pidForm = new PID();
 
 
         // Plots.
@@ -330,7 +329,7 @@ namespace MainApp
             }
         }
 
-        private void BStartExperiment_Click(object sender, EventArgs e)
+        private void BtnStartExperiment_Click(object sender, EventArgs e)
         {          
             if (!_expGoing)
             {
@@ -362,8 +361,8 @@ namespace MainApp
                             txtTempFileName.Text = fileName;
                             string filePath = Path.Combine(tbTempFilePath.Text, fileName);
                             _tempWriter = new StreamWriter(filePath);
-                            _tempWriter.WriteLine("Time (s)\tObject temperature\tAmbient Temperature\tCalibrated ambient temperature" +
-                             "\tCalibrated object temperature");
+                            _tempWriter.WriteLine("Time (s)\tObject temperature \t Calibrated object temperature");
+                            
                         }
                     }
                     else
@@ -402,11 +401,11 @@ namespace MainApp
         {
             if (_secondsTillEnd <= 0)   // If the time selected for the experiment has elapsed.
             {
-
+                Log.Information("Experiment has ended.");
                 _expGoing = false;
                 btnStartExperiment.Text = "Start Experiment";
                 txtExperimentStarted.Text = "Experiment Not Going";
-                txtExperimentStarted.BackColor = Color.Green;
+                txtExperimentStarted.BackColor = Color.Red;
                 txtExpTime.Visible = false;
                 nudExpTime.Visible = true;
                 _expTimer.Stop();
@@ -425,10 +424,22 @@ namespace MainApp
                     try
                     {                      
                         double objTemp = Convert.ToDouble(array.AvgTemperature);
-                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
-                        if (_isTempRecording)
+                        double calObjTemp = objTemp * calibration._sensorCalA + calibration._sensorCalB;
+                        if (!cbNoCalibration.Checked) 
                         {
-                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp, calObjTemp }, false);
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo) + "\t" + "\t" + "\t" + "\t" + calObjTemp.ToString("F"));
+                            }
+                        }
+                        else
+                        {
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            }
                         }
                     }
                     catch (FormatException ex) { Log.Error(ex.ToString()); }
@@ -439,11 +450,23 @@ namespace MainApp
                     {
                         double objTemp = Convert.ToDouble(oneMlxSensor.ObjectTemperature, CultureInfo.InvariantCulture);
                         double ambTemp = Convert.ToDouble(oneMlxSensor.AmbientTemperature, CultureInfo.InvariantCulture);
-                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                        double calObjTemp = objTemp * calibration._sensorCalA + calibration._sensorCalB;
                         SetGraphData(pltAmbTemp, _time, new double[] { ambTemp }, false);
-                        if (_isTempRecording)
+                        if (!cbNoCalibration.Checked)
                         {
-                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp, calObjTemp }, false);      
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo) + "\t" + "\t" + "\t" + "\t" + calObjTemp.ToString("F"));
+                            }
+                        }
+                        else
+                        {
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            }
                         }
                     }
                     catch (FormatException ex) { Log.Error(ex.ToString()); }
@@ -452,13 +475,27 @@ namespace MainApp
                 {
                     try
                     {
-                        double objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature, CultureInfo.InvariantCulture);
-                        double ambTemp = Convert.ToDouble(twoMlxSensors.AvgAmbTemperature, CultureInfo.InvariantCulture);
-                        SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+                        double objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature);
+                        double ambTemp = Convert.ToDouble(twoMlxSensors.AvgAmbTemperature);
+                        double calObjTemp = objTemp * calibration._sensorCalA + calibration._sensorCalB;
                         SetGraphData(pltAmbTemp, _time, new double[] { ambTemp }, false);
-                        if (_isTempRecording)
+                        if (!cbNoCalibration.Checked)
                         {
-                            _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp, calObjTemp }, false);
+                            
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo) + "\t" + "\t" + "\t" + "\t" + calObjTemp.ToString("F"));
+                            }
+                        }
+                        else
+                        {
+                            SetGraphData(pltObjTemp, _time, new double[] { objTemp }, false);
+
+                            if (_isTempRecording)
+                            {
+                                _tempWriter.WriteLine(_time.ToString(_culInfo) + "\t" + "\t" + "\t" + objTemp.ToString(_culInfo));
+                            }
                         }
                     }
                     catch (FormatException ex) { Log.Error(ex.ToString()); }
@@ -475,7 +512,6 @@ namespace MainApp
             oneMlxSensor.Dispose();
             twoMlxSensors.Dispose();
             calibration.Dispose();
-            pidForm.Dispose();
             Log.CloseAndFlush();
         }
 
@@ -533,7 +569,7 @@ namespace MainApp
             {
                 try
                 {
-                    calibration._objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature, CultureInfo.InvariantCulture);
+                    calibration._objTemp = Convert.ToDouble(twoMlxSensors.AvgObjTemperature);
                 }
                 catch { calibration._objTemp = 0; }
             }
@@ -547,17 +583,15 @@ namespace MainApp
             _calTimer.Stop();
         }
 
-        private void BtnPIDControl_Click(object sender, EventArgs e)
+        private void RbPIDControl_CheckedChanged(object sender, EventArgs e)
         {
-            for (int index = Application.OpenForms.Count - 1; index >= 0; index--)
+            if (gbPID.Visible == true)
             {
-                if (Application.OpenForms[index].Name == "PID")
-                {
-                    Application.OpenForms[index].Close();
-                }
+                gbPID.Visible = false;
             }
-            pidForm = new PID();
-            pidForm.Show();
+            else
+                gbPID.Visible = true;
         }
+
     }
 }

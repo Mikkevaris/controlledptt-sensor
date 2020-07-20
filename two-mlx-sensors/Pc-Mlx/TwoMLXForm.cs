@@ -156,13 +156,14 @@ namespace twoMlxSensors
         }
         private void sendDataTimer_Tick(object sender, EventArgs e)
         {
-            double.TryParse(txtObj1Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj1temp);
-            double.TryParse(txtObj2Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj2temp);
+            double.TryParse(txtObj1Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj1Temp);
+            double.TryParse(txtObj2Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double obj2Temp);
             double.TryParse(txtAmb1Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double amb1temp);
             double.TryParse(txtAmb2Temp.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double amb2temp);
 
-            AvgObjTemperature = ((obj1temp + obj2temp) / 2).ToString("F");
+            AvgObjTemperature = ((obj1Temp + obj2Temp) / 2).ToString("F");
             AvgAmbTemperature = ((amb1temp + amb2temp) / 2).ToString("F");
+            //Console.WriteLine(AvgObjTemperature);
         }
 
    
