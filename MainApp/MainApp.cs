@@ -19,8 +19,6 @@ using System.Globalization;
 using System.IO;
 using Serilog;
 
-
-
 namespace MainApp
 {
     public partial class MainApp : Form
@@ -333,7 +331,7 @@ namespace MainApp
         {          
             if (!_expGoing)
             {
-                Log.Information("Experiment started.");
+                Log.Information("Experiment started. Timer set to {0} minutes.", nudExpTime.Value);
                 if (btnSelectSensor.Enabled == false) // To see if sensor has been selected.
                 {
                     // To see if send button is enabled on sensor's interface.
@@ -582,16 +580,6 @@ namespace MainApp
             btnCalibration.Enabled = true;
             _calTimer.Stop();
         }
-
-        private void RbPIDControl_CheckedChanged(object sender, EventArgs e)
-        {
-            if (gbPID.Visible == true)
-            {
-                gbPID.Visible = false;
-            }
-            else
-                gbPID.Visible = true;
-        }
-
+      
     }
 }

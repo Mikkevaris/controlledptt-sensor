@@ -420,6 +420,7 @@
             this.bPIDStart.TabIndex = 0;
             this.bPIDStart.Text = "Start PID Control";
             this.bPIDStart.UseVisualStyleBackColor = true;
+            this.bPIDStart.Click += new System.EventHandler(this.BtnPIDStart_Click);
             // 
             // label26
             // 

@@ -128,14 +128,14 @@ namespace MainApp
                 Title = "Sensor Temperature",
                 Position = AxisPosition.Bottom,
                 Minimum = 0,
-                Maximum = 100
+                Maximum = 50
             }) ;
             _calibrationPlotModel.Axes.Add(new LinearAxis()
             {
                 Title = "Real Temperature",
                 Position = AxisPosition.Left,
                 Minimum = 0,
-                Maximum = 100
+                Maximum = 50
             });
             //// Series for sensor temperature.
             _calibrationPlotModel.Series.Add(new ScatterSeries()
@@ -165,27 +165,11 @@ namespace MainApp
             _sensorCalB = (double)nudSensorCalB.Value;
         }
 
-        private double GetCalibratedObjectTemp(double objTemp)
-        {
-            if (cbNoObjCalibration.Checked)
-                return objTemp;
-
-            return _sensorCalA * objTemp + _sensorCalB;
-        }
-
-        private double GetCalibratedAmbientTemp(double ambTemp)
-        {
-            if (cbNoAmbCalibration.Checked)
-                return ambTemp;
-
-            return (double)nudRealAmbTemp.Value;
-        }
-
         private void CalibrationTimer_Tick(object sender, EventArgs e)
         {       
             rtbObjTemp.Text = _objTemp.ToString();
-            rtbCalObjTemp.Text = GetCalibratedObjectTemp(_objTemp).ToString();
-            
+            rtbCalObjTemp.Text = (_sensorCalA * _objTemp + _sensorCalB).ToString();
+
             // Sets the measured temperature from sensor to DataGrid's selected row's first index. 
             if (dgCalibration.CurrentCell != null)
             {
@@ -229,7 +213,13 @@ namespace MainApp
                 }
                 try
                 {
-                    File.WriteAllText(sfd.FileName, _slope.ToString("F") + "\t" + _intercept.ToString("F"));
+                    List<double> coefficients = new List<double>
+                    {
+                        _slope,
+                        _intercept
+                    };
+                    string json = JsonConvert.SerializeObject(coefficients.ToArray(), Formatting.Indented);
+                    File.WriteAllText(sfd.FileName, json);
                 }
                 catch (Exception ex)
                 {
@@ -245,9 +235,17 @@ namespace MainApp
             using (var ofd = new OpenFileDialog())
             {
                 DialogResult result = ofd.ShowDialog();
-                var coefficients = File.ReadAllText(ofd.FileName).Split('\t');
-                _slope = Convert.ToDouble(coefficients[0]);
-                _intercept = Convert.ToDouble(coefficients[1]);
+                try
+                {
+                    string json = File.ReadAllText(ofd.FileName);
+                    List<double> coefficients = JsonConvert.DeserializeObject<List<double>>(json);
+                    _slope = Convert.ToDouble(coefficients[0]);
+                    _intercept = Convert.ToDouble(coefficients[1]);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex.Message);
+                }                                     
             }
        
             nudSensorCalA.Value = (decimal)_slope;
