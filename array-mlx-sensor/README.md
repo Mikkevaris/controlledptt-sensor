@@ -5,7 +5,7 @@ This sketch and C# communication program are dedicated to reading temperatures s
 
 # Requirements
 
-- Teensy or similar board
+- Teensy or similar board (we used Teensy 3.6)
 - MLX90621 IR thermal array or similar sensor
 - Two resistors (4,7 kOhm)
 - One capacitor (100 nF)
