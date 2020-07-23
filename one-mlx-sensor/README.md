@@ -31,7 +31,7 @@ This sketch and C# communication program are dedicated to reading temperature in
 
  See below for a Fritzing diagram with a Teensy 3.1 – a circuit analogous to our Teensy 3.6 setup. 
  
-<img src="https://github.com/Mikkevaris/controlledptt-sensor/blob/master/array-mlx-sensor/Array_bb.png" height="350" width="600">
+<img src="https://github.com/Mikkevaris/controlledptt-sensor/blob/master/one-mlx-sensor/OneMlx.png" height="350" width="600">
 
 # Compilation
 
