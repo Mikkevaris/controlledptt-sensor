@@ -29,9 +29,7 @@
 // Watch Video explainign I2C address: https://www.youtube.com/watch?v=bqMMIbmYJS0
 //
  
-//#include <Wire.h> //Include this library if using Arduino or similar board.
-#include <i2c_t3.h> // Enhanced I2C library for Teensy 3.x & LC devices.
-
+#include <Wire.h> //Include this library if using Arduino or similar board.
  
 void setup()
 {
