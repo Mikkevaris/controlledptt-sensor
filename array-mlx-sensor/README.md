@@ -42,4 +42,10 @@ Final step in order to compile the sketch is to make Teensy development board wo
 
 # Running C# program
 
-When the Arduino sketch is uploaded to Teensy, you are ready to move on to the C# program. 
+When the Arduino sketch is uploaded to Teensy, you are ready to move on to the C# program. Start by opening array-mlx.sln in Visual Studio. However, before you can run the program there's still few things to do. The program uses BaseSensor as a base class, which handles the communication with the hardware. You'll need to include a .dll reference generated of this class in array-mlx program. To do so, first open BaseSensor.sln in your Visual Studio. Basesensor.sln can be found in repository's base-sensor folder. On the toolbar choose the Release option as shown in image below.
+
+<img src = "https://github.com/Mikkevaris/controlledptt-sensor/blob/master/array-mlx-sensor/toolbarbuildconfiguration.png">
+
+Then select Build > Build Solution. After building is succeeded you can close the BaseSensor class. Now in array-mlx window right click References which can be found in Solution Explorer on right side of the Visual Studio window. Click "Add References" and then "Browse" in Reference Manager window. Navigate to this repository's folder and then base-sensor > bin > Release and add BaseSensor.dll. Make sure that .dll is checked in Reference Manager window and click "OK". Reference of the BaseSensor class is now included.
+
+Last step in order to run the program is to download Serilog NuGet package. Serilog provides diagnostic logging to files and it is used in this program. Right click on "array-mlx" in Solution Explorer and select "Manage NuGet Packages..." It opens a window in your Visual Studio where you can browse and install different kind of packages for your project. Search "Serilog" and install the latest version of it. After the installation the program should be ready for running. Run the program by selecting "Start" on the toolbar and the sensor's interface should pop up. The program is now ready for visualizing the temperature readings.
