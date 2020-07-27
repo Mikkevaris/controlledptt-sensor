@@ -1,5 +1,6 @@
-# Libraries for Arduion Studio
+# Libraries for Arduino Studio
 
-This folder constains necessary libraries for Arduino Studio to read temeprerature from sensors.
+This folder constains necessary libraries for Arduino Studio to read temperature from sensors.
 
-- MLX90621 contains I2C and MLX90621 libraries. The MLX90621 library uses I2C library to communicate with a sensor. There is also examples how to use I2C and MLX90621 libraries.
+- The MLX90621 folder contains I2C library to communicate with a MLX90621 sensor. There is also examples how to use the library.
+- I2Cmaster library is used when changing the address of sensor. Keep in mind that this library isn't supported on Teensy development boards.
