@@ -34,7 +34,7 @@ This folder contains code to communicate with two MLX90614 or similar sensors co
 
  See below for a Fritzing diagram with a Teensy 3.1 – a circuit analogous to our Teensy 3.6 setup. 
  
-<img src="https://github.com/Mikkevaris/controlledptt-sensor/blob/master/two-mlx-sensors/Two-point-sensors.png" height="350" width="600">
+<img src="https://github.com/Mikkevaris/controlledptt-sensor/blob/master/two-mlx-sensors/Two-point-sensors-board-wiring.png" height="350" width="600">
 
 # Scanning and changing the address of sensor
 
@@ -42,7 +42,7 @@ Sensor's default address is 0x5A. Address of the sensor can be checked using i2c
 
 As mentioned before, in order to use two sensors simultaneously, their addresses must be different. So you have to change the address of one your sensor using i2c_change_address sketch found in utils folder. Keep in mind that this sketch compiles only with Arduino or similar development board. Teensy development boards doesn't support I2Cmaster library which is needed in order to compile the sketch. Also note that you can have only one sensor in the circuit when changing the address, so remove the other sensor before running this sketch.
 
-Start by opening i2c_change_address in your Arduino IDE. Before you can upload the sketch, you'll need to install the I2Cmaster library into your Arduino IDE by clicking the "sketch" menu and then Include Library > Add .ZIP Library. You will be asked to select the library you would like to add. The library can be found in this repository's lib folder. Navigate to the .zip file's location and open it. Return to the Sketch > Include Library menu. You should now see the library at the bottom of the drop-down menu. It is ready to be used in your sketch. Instructions where to write the new desired address of the sensor can be found commented in the code. Write the address and upload the sketch. Address of the sensor should now be changed.
+Start by opening i2c_change_address in your Arduino IDE. Before you can upload the sketch, you'll need to install the I2Cmaster library into your Arduino IDE by clicking the "sketch" menu and then Include Library > Add .ZIP Library. You will be asked to select the library you would like to add. The library can be found in this repository's lib folder. Navigate to the .zip file's location and open it. Return to the Sketch > Include Library menu. You should now see the library at the bottom of the drop-down menu. It is ready to be used in your sketch. Instructions where to write the new desired address of the sensor can be found commented in the sketch. Write the new address and upload the sketch. Address of the sensor should now be changed.
 
 # Compilation
 
